@@ -151,7 +151,7 @@ def lookup_metric(key)
 end
 
 def event_key(id, time)
-  "#{id}-#{time.strftime("%Y-%M-%d-%H")}"
+  "#{id}-#{time.strftime("%Y-%m-%d-%H")}"
 end
 
 def latest_events

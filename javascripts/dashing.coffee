@@ -106,6 +106,8 @@ source.addEventListener 'error', (e)->
 
 source.addEventListener 'message', (e) ->
   data = JSON.parse(e.data)
+  console.log("Message received: ")
+  console.log(data)
   if lastEvents[data.id]?.updatedAt != data.updatedAt
     if Dashing.debugMode
       console.log("Received data for #{data.id}", data)

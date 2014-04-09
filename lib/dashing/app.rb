@@ -120,19 +120,19 @@ get '/views/:widget?.html' do
 end
 
 def send_event(id, body, target=nil)
-  body[:id] = id
-  body[:updatedAt] ||= Time.now.to_i
+  body['id'] = id
+  body['updatedAt'] ||= Time.now.to_i
 
-  time_now = Time.at(body[:updatedAt])
+  time_now = Time.at(body['updatedAt'])
 
   # append any historical stats
-  body[:OneDayAgo] = lookup_metric(event_key(id, time_now - (24 * 60*60)))
-  body[:SevenDaysAgo] = lookup_metric(event_key(id, time_now - (7 * 24 * 60*60)))
-  body[:ThirtyDaysAgo] = lookup_metric(event_key(id, time_now - (30 * 24 * 60*60)))
+  body['1d'] = lookup_metric(event_key(id, time_now - (24 * 60*60)))
+  body['7d'] = lookup_metric(event_key(id, time_now - (7 * 24 * 60*60)))
+  body['30d'] = lookup_metric(event_key(id, time_now - (30 * 24 * 60*60)))
 
-  if body[:currrent]
+  if body['current']
     # For now use the history object as that would be overridden with Redis
-    Sinatra::Application.settings.history[event_key(id, time_now)] = body[:current]
+    Sinatra::Application.settings.history[event_key(id, time_now)] = body['current']
   end
 
   event = format_event(body.to_json, target)

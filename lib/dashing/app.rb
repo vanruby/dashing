@@ -122,6 +122,19 @@ end
 def send_event(id, body, target=nil)
   body[:id] = id
   body[:updatedAt] ||= Time.now.to_i
+
+  time_now = Time.at(body[:updatedAt])
+
+  # append any historical stats
+  body[:OneDayAgo] = lookup_metric(event_key(id, time_now - (24 * 60*60)))
+  body[:SevenDaysAgo] = lookup_metric(event_key(id, time_now - (7 * 24 * 60*60)))
+  body[:ThirtyDaysAgo] = lookup_metric(event_key(id, time_now - (30 * 24 * 60*60)))
+
+  if body[:currrent]
+    # For now use the history object as that would be overridden with Redis
+    Sinatra::Application.settings.history[event_key(id, time_now)] = body[:current]
+  end
+
   event = format_event(body.to_json, target)
   Sinatra::Application.settings.history[id] = event unless target == 'dashboards'
   Sinatra::Application.settings.connections.each { |out| out << event }
@@ -131,6 +144,14 @@ def format_event(body, name=nil)
   str = ""
   str << "event: #{name}\n" if name
   str << "data: #{body}\n\n"
+end
+
+def lookup_metric(key)
+  Sinatra::Application.settings.history[key]
+end
+
+def event_key(id, time)
+  "#{id}-#{time.strftime("%Y-%M-%d-%H")}"
 end
 
 def latest_events

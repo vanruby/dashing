@@ -129,6 +129,7 @@ def send_event(id, body, target=nil)
   body['1d'] = lookup_metric(event_key(id, time_now - (24 * 60*60)))
   body['7d'] = lookup_metric(event_key(id, time_now - (7 * 24 * 60*60)))
   body['30d'] = lookup_metric(event_key(id, time_now - (30 * 24 * 60*60)))
+  body['last'] ||= body['1d']
 
   if body['current']
     # For now use the history object as that would be overridden with Redis

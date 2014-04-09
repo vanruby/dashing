@@ -33,6 +33,7 @@ set :public_folder, File.join(settings.root, 'public')
 set :views, File.join(settings.root, 'dashboards')
 set :default_dashboard, nil
 set :auth_token, nil
+set :metric_store, {}
 
 if File.exists?(settings.history_file)
   set history: YAML.load_file(settings.history_file)
@@ -133,7 +134,7 @@ def send_event(id, body, target=nil)
 
   if body['current']
     # For now use the history object as that would be overridden with Redis
-    Sinatra::Application.settings.history[event_key(id, time_now)] = body['current']
+    Sinatra::Application.settings.metric_store[event_key(id, time_now)] = body['current']
   end
 
   event = format_event(body.to_json, target)
@@ -148,7 +149,7 @@ def format_event(body, name=nil)
 end
 
 def lookup_metric(key)
-  Sinatra::Application.settings.history[key].try(:to_i)
+  Sinatra::Application.settings.metric_store[key].try(:to_i)
 end
 
 def event_key(id, time)

@@ -147,7 +147,7 @@ def format_event(body, name=nil)
 end
 
 def lookup_metric(key)
-  Sinatra::Application.settings.history[key]
+  Sinatra::Application.settings.history[key].try(:to_i)
 end
 
 def event_key(id, time)

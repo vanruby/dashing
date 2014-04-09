@@ -106,7 +106,7 @@ source.addEventListener 'error', (e)->
 
 source.addEventListener 'message', (e) ->
   data = JSON.parse(e.data)
-  console.log("Message received: ")
+  console.log("Message received:")
   console.log(data)
   if lastEvents[data.id]?.updatedAt != data.updatedAt
     if Dashing.debugMode
@@ -118,6 +118,8 @@ source.addEventListener 'message', (e) ->
 
 source.addEventListener 'dashboards', (e) ->
   data = JSON.parse(e.data)
+  console.log("Dashboard data received:")
+  console.log(data)
   if Dashing.debugMode
     console.log("Received data for dashboards", data)
   if data.dashboard is '*' or window.location.pathname is "/#{data.dashboard}"
